@@ -3,19 +3,18 @@
 + URL: <http://e2p1.davidcurtis.me>
 
 ## Game planning
-_In plain english - no code - think through how you'll make this game work. Example:_
-+ _Create an array of two options, heads and tails._
-+ _Randomly choose one of these options from the array and assign it as Player A's move_
-+ _Assign Player B's move to whatever option was not chosen._
-+ _Randomly choose from the array of heads/tails again and assign this as the "flip" value_
-+ _If Player A's move matches "flip", then assign a value winner to Player A_
-+ _Otherwise, assign a value winner to Player B_
-+ _Report the results of Player A's Move, Player B's move, the flip, and the winner to the page_
+_Description of Game:_
++ _Roll two dice together in one roll_
++ _Check for winning roll:  7 or 11 on first roll_
++ _Check for losing roll:  2 on first roll_
++ _If first roll is not a winning or losing first roll then the role value is the point to match in order to win._
++ _Roll two dice together in one roll again until scoring a winning or losing roll, (matching point to match wins, roll of 7 loses), repeat until scoring a winning or losing roll._
 
 
 
 
 ## Outside resources
+nginx index.html page used as initial index.php template
 
 ## Notes for instructor
 *any notes for me to refer to while grading; if none, omit this section*
