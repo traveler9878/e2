@@ -15,6 +15,3 @@ _Description of Game:_
 
 ## Outside resources
 nginx index.html page used as initial index.php template
-
-## Notes for instructor
-*any notes for me to refer to while grading; if none, omit this section*
