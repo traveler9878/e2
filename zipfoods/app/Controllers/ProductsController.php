@@ -5,19 +5,13 @@ use App\Products;
 
 class ProductsController extends Controller
 {
-    private $productsObj;
-
-    public function __construct($app)
-    {
-        parent::__construct($app);
-        $this->productsObj = new Products($this->app->path('/database/products.json'));
-    }
+    
     
     public function index()
     {
         //dump($productsObj);
 
-        $products = $this->productsObj->getAll();
+        $products = $this->app->db()->all('products');
         
         $this->app->view('products/index', ['products' => $products]);
     }
@@ -30,19 +24,22 @@ class ProductsController extends Controller
             $this->app->redirect('/products');
         }
 
-        $productsObj = new Products($this->app->path('/database/products.json'));
+        
+        $productQuery = $this->app->db()->findByColumn('products', 'sku', '=', $sku);
+        $reviews = $this->app->db()->findByColumn('reviews', 'product_id', '=', $productQuery[0]['id']);
+        //dd($productQuery);
 
-        $product = $productsObj->getBySku($sku);
-
-        //dump($product);
-
-        if(is_null($product)){
+        if(empty($productQuery)){
             return $this->app->view('products/missing');
+        }else{
+            $product = $productQuery[0];
         }
+
+        //dd($productQuery);
 
         $reviewSaved = $this->app->old('reviewSaved');
 
-        return $this->app->view('products/show', ['product' => $product, 'reviewSaved' => $reviewSaved]);
+        return $this->app->view('products/show', ['product' => $product, 'reviews' => $reviews, 'reviewSaved' => $reviewSaved]);
     }
 
     public function missing(){
@@ -55,53 +52,68 @@ class ProductsController extends Controller
         //validate, if fails aborts and retruns to submisstion page with errors and old data structures
         $this->app->validate([
             'sku' => 'required',
+            'product_id' => 'required',
             'name' => 'required',
             'review' => 'required|minLength:200'
         ]);
-        $host = $this->app->env('DB_HOST');
-    $database = $this->app->env('DB_NAME');
-    $username = $this->app->env('DB_USERNAME');
-    $password = $this->app->env('DB_PASSWORD');
-    
-    # DSN (Data Source Name) string
-    # contains the information required to connect to the database
-    $dsn = "mysql:host=$host;dbname=$database;charset=utf8mb4";
-
-    # Driver-specific connection options
-    $options = [
-        \PDO::ATTR_ERRMODE => \PDO::ERRMODE_EXCEPTION,
-        \PDO::ATTR_DEFAULT_FETCH_MODE => \PDO::FETCH_ASSOC,
-        \PDO::ATTR_EMULATE_PREPARES => false,
-    ];
-
-    try {
-        # Create a PDO instance representing a connection to a database
-        $pdo = new \PDO($dsn, $username, $password, $options);
-    } catch (\PDOException $e) {
-        throw new \PDOException($e->getMessage(), (int)$e->getCode());
-    }
-
+      
     //dump('Connection successful!');
 
     
         
         //dump($this->app->input('sku'));
+        $product_id = $this->app->input('product_id');
         $sku = $this->app->input('sku');
         $name = $this->app->input('name');
         $review = $this->app->input('review');
 
         #Todo:  Persist review to the database...
-        $sqlTemplate = "INSERT INTO reviews (name, sku, review) 
-        VALUES (:name, :sku, :review)";
         
-        $values = [
+        $this->app->db()->insert('reviews', [
+            'product_id' => $product_id,
             'name' => $name,
-            'sku' => $sku,
             'review' => $review
-        ];
+        ]);
         
-        $statement = $pdo->prepare($sqlTemplate);
-        $statement->execute($values);
         return $this->app->redirect('/product?sku=' . $sku, ['reviewSaved' => true]);
     }
+
+    public function new(){
+        /*
+        $this->app->validate([
+            'sku' => 'required',
+            'description' => 'required',
+            'name' => 'required',
+            'price' => 'required|numeric',
+            'available' => 'required',
+            'weight' => 'required|numeric',
+            'perishable' => 'required|digit'
+        ]);
+        */
+        if(is_null($this->app->input('name'))){
+            return $this->app->view('products/new');
+        }
+        $name = $this->app->input('name');
+        $sku = $this->app->input('sku');
+        $description = $this->app->input('description');
+        $price = $this->app->input('price');
+        $available = $this->app->input('available');
+        $weight = $this->app->input('weight');
+        $perishable = $this->app->input('perishable');
+
+        $this->app->db()->insert('products', [
+            'sku' => $sku,
+            'name' => $name,
+            'description' => $description,
+            'price' => $price,
+            'available' => $available,
+            'weight' => $weight,
+            'perishable' => $perishable
+        ]);
+        
+        return $this->app->redirect('/product?sku=' . $sku, ['newSaved' => true]);
+        
+    }
+    
+
 }

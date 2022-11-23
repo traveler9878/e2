@@ -1,7 +1,7 @@
 @extends('templates/master')
 
 @section('title')
-    {{ $product['name'] }}
+    <div>New Product</div>
 @endsection
 
 
@@ -24,20 +24,38 @@
 
         <div class='product-price'>${{ $product['price'] }}</div>
     </div>
-    <form method='POST' id='product-review' action='/products/save-review'>
+    <form method='POST' id='product-new' action='/products/new'>
         <h3>Review {{ $product['name'] }}</h3>
-        <input type='hidden' name='product_id' value='{{ $product['id'] }}'>
-        <input type='hidden' name='sku' value='{{ $product['sku'] }}'>
+        <input type='text' name='sku' value='{{ $product['sku'] }}'>
         <div class='form-group'>
             <label for='name'>Name</label>
             <input type='text' class='form-control' name='name' id='name' value='{{ $app->old('name') }}'>
         </div>
-
         <div class='form-group'>
-            <label for='review'>Review</label>
-            <textarea name='review' id='review' class='form-control'>{{ $app->old('review') }}</textarea>
-            (Min: 200 characteers)
+            <label for='name'>Name</label>
+            <input type='text' class='form-control' name='description' id='description'
+                value='{{ $app->old('description') }}'>
         </div>
+        <div class='form-group'>
+            <label for='name'>Name</label>
+            <input type='text' class='form-control' name='price' id='price' value='{{ $app->old('price') }}'>
+        </div>
+        <div class='form-group'>
+            <label for='name'>Name</label>
+            <input type='text' class='form-control' name='available' id='available' value='{{ $app->old('available') }}'>
+        </div>
+        <div class='form-group'>
+            <label for='name'>Name</label>
+            <input type='text' class='form-control' name='weight' id='weight' value='{{ $app->old('weight') }}'>
+        </div>
+        <div class='form-group'>
+            <label for='name'>Name</label>
+            <input type='text' class='form-control' name='perishable' id='perishable'
+                value='{{ $app->old('perishable') }}'>
+        </div>
+
+
+
 
         <button type='submit' class='btn btn-primary'>Submit Review</button>
     </form>
