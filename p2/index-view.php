@@ -2,7 +2,6 @@
 <html>
 
 <head>
-    <title>Project 2 (David Curtis)</title>
     <style>
     body {
         width: 35em;
@@ -13,9 +12,7 @@
 </head>
 
 <body>
-    <h1>Project 2</h1>
-
-    <h2>Let it Roll Dice Game</h2>
+    <h1>Project 3</h1>
     <form method='POST' action='process.php'>
 
 

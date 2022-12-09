@@ -26,7 +26,11 @@ class ProductsController extends Controller
 
         
         $productQuery = $this->app->db()->findByColumn('products', 'sku', '=', $sku);
+
+//the solution uses thee product set below instead of array index 0 which would be a problem if the array were empty
         $reviews = $this->app->db()->findByColumn('reviews', 'product_id', '=', $productQuery[0]['id']);
+
+
         //dd($productQuery);
 
         if(empty($productQuery)){
@@ -34,6 +38,7 @@ class ProductsController extends Controller
         }else{
             $product = $productQuery[0];
         }
+//solution:  $reviews = $this->app->db()->findByColumn('reviews', 'product_id', '=', $product['id'];
 
         //dd($productQuery);
 
@@ -78,41 +83,38 @@ class ProductsController extends Controller
         return $this->app->redirect('/product?sku=' . $sku, ['reviewSaved' => true]);
     }
 
-    public function new(){
-        /*
-        $this->app->validate([
-            'sku' => 'required',
-            'description' => 'required',
-            'name' => 'required',
-            'price' => 'required|numeric',
-            'available' => 'required',
-            'weight' => 'required|numeric',
-            'perishable' => 'required|digit'
-        ]);
-        */
-        if(is_null($this->app->input('name'))){
-            return $this->app->view('products/new');
-        }
-        $name = $this->app->input('name');
-        $sku = $this->app->input('sku');
-        $description = $this->app->input('description');
-        $price = $this->app->input('price');
-        $available = $this->app->input('available');
-        $weight = $this->app->input('weight');
-        $perishable = $this->app->input('perishable');
+    //replaced new with instruction code
+    public function new()
+    {
+        $productSaved = $this->app->old('productSaved');
+        $sku = $this->app->old('sku');
 
-        $this->app->db()->insert('products', [
+        return $this->app->view('products/new', [
+            'productSaved' => $productSaved,
             'sku' => $sku,
-            'name' => $name,
-            'description' => $description,
-            'price' => $price,
-            'available' => $available,
-            'weight' => $weight,
-            'perishable' => $perishable
         ]);
-        
-        return $this->app->redirect('/product?sku=' . $sku, ['newSaved' => true]);
-        
+    }
+
+    /**
+     *
+     */
+    public function save()
+    {
+        $this->app->validate([
+            'name' => 'required',
+            'sku' => 'required|alphaNumericDash',
+            'description' => 'required',
+            'price' => 'required|numeric',
+            'available' => 'required|numeric',
+            'weight' => 'required|numeric'
+        ]);
+
+        $this->app->db()->insert('products', $this->app->inputAll());
+
+        $this->app->redirect('/products/new', [
+            'productSaved' => true,
+            'sku' => $this->app->input('sku')
+        ]);
     }
     
 

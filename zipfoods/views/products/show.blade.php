@@ -7,7 +7,7 @@
 
 @section('content')
     @if ($reviewSaved)
-        <div class='alert alert-success'>Thank you, your review was saved.</div>
+        <div class='alert alert-success' test='review-confirmation'>Thank you, your review was saved.</div>
     @endif
 
     @if ($app->errorsExist())
@@ -30,16 +30,17 @@
         <input type='hidden' name='sku' value='{{ $product['sku'] }}'>
         <div class='form-group'>
             <label for='name'>Name</label>
-            <input type='text' class='form-control' name='name' id='name' value='{{ $app->old('name') }}'>
+            <input type='text' test='reviewer-name-input' class='form-control' name='name' id='name'
+                value='{{ $app->old('name') }}'>
         </div>
 
         <div class='form-group'>
             <label for='review'>Review</label>
-            <textarea name='review' id='review' class='form-control'>{{ $app->old('review') }}</textarea>
+            <textarea name='review' test='review-textarea' id='review' class='form-control'>{{ $app->old('review') }}</textarea>
             (Min: 200 characteers)
         </div>
 
-        <button type='submit' class='btn btn-primary'>Submit Review</button>
+        <button type='submit' test='review-submit-button' class='btn btn-primary'>Submit Review</button>
     </form>
 
     @if ($app->errorsExist())
@@ -51,10 +52,15 @@
     @endif
     <a href='/products'>&larr; Return to all products</a>
 
+    @if (!$reviews)
+        There are no reviews for this product yet.
+    @endif
+
+
     <div id='reviews'>
         @foreach ($reviews as $review)
             <div>
-                <div class='review-name'>{{ $review['name'] }}</div>
+                <div class='reviewer-name-input'>{{ $review['name'] }}</div>
                 <div class='review-text'>>{{ $review['review'] }}</div>
             </div>
         @endforeach
